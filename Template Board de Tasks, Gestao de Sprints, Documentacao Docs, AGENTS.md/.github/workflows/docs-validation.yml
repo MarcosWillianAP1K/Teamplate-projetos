@@ -1,0 +1,30 @@
+# =============================================================================
+# GitHub Actions — Validação de Documentação e Scripts
+# =============================================================================
+
+name: Docs CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-docs:
+    name: "Docs: Verificação de Scripts"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Executar script de extração de docstrings
+        run: node scripts/generate-docstrings-doc.js

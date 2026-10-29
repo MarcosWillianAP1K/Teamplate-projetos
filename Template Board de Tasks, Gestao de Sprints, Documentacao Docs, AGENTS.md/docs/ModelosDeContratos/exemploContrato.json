@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExemploContrato",
+  "description": "Modelo canônico para contratos de dados e integração entre serviços",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Identificador único do recurso"
+    },
+    "nome": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100,
+      "description": "Nome descritivo do item"
+    },
+    "categoria": {
+      "type": "string",
+      "enum": ["geral", "arquitetura", "frontend", "backend"],
+      "description": "Classificação semântica do recurso"
+    },
+    "status_ativo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Indicador de soft delete"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data de criação em UTC (ISO 8601)"
+    }
+  },
+  "required": ["id", "nome", "categoria", "status_ativo", "created_at"],
+  "additionalProperties": false
+}

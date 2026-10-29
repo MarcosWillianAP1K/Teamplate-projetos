@@ -1,0 +1,65 @@
+# =============================================================================
+# docker-compose.yml — Backend REST + Frontend SPA (com Supabase Cloud)
+#
+# Comandos:
+#   Subir tudo:    docker compose up --build
+#   Parar:         docker compose down
+# =============================================================================
+
+services:
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: template-backend-supabase
+    restart: unless-stopped
+    env_file:
+      - path: ./Backend/.env
+        required: false
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      target: production
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
+        VITE_WS_URL: ${VITE_WS_URL:-}
+        VITE_USE_MOCK_DATA: ${VITE_USE_MOCK_DATA:-false}
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:-}
+    container_name: template-frontend-supabase
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5173/nginx-health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  app-network:
+    driver: bridge
+    name: template-supabase-network

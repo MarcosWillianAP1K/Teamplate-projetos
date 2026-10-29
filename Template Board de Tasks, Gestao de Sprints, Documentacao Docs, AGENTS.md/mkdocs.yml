@@ -1,0 +1,20 @@
+site_name: Documentação do Projeto
+site_description: Catálogo arquitetural e governança de tarefas
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Mudar para modo escuro
+    - scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Mudar para modo claro
+nav:
+  - Início: docs/README.md
+  - Arquitetura: docs/architecture.md
+  - Roteiro de Testes: docs/roteiro-testes.md
+  - Sprints e Tarefas: docs/DocsSprints/visao_geral.md

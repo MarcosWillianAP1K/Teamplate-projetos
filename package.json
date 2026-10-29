@@ -1,0 +1,12 @@
+{
+  "name": "templates-catalog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Catálogo de Templates Fullstack para Início Rápido de Projetos",
+  "scripts": {
+    "typecheck:docker-pg": "npm --prefix \"React vite tailwind typescript, typescript restFul, postgreeSQL, Clean MVC Feature-Driven, docker\" run typecheck",
+    "test:docker-pg": "npm --prefix \"React vite tailwind typescript, typescript restFul, postgreeSQL, Clean MVC Feature-Driven, docker\" run test",
+    "typecheck:supabase": "npm --prefix \"React vite tailwind typescript, typescript restFul, supabase, Clean MVC Feature-Driven\" run typecheck",
+    "test:supabase": "npm --prefix \"React vite tailwind typescript, typescript restFul, supabase, Clean MVC Feature-Driven\" run test"
+  }
+}

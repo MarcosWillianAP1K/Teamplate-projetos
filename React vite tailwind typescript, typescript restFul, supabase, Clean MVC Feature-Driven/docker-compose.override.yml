@@ -1,0 +1,40 @@
+# =============================================================================
+# docker-compose.override.yml — Hot-Reload em Desenvolvimento
+# =============================================================================
+
+services:
+
+  backend:
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./Backend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  frontend:
+    build:
+      target: development
+    env_file:
+      - path: ./Frontend/.env
+        required: false
+    environment:
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+      VITE_BACKEND_PROXY_TARGET: http://backend:3000
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5173/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

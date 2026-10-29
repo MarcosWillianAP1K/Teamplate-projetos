@@ -1,0 +1,69 @@
+# ==============================================================================
+# docker-compose.yml ISOLADO DO BANCO DE DADOS (Pasta Database/)
+# ==============================================================================
+# Permite subir APENAS o banco PostgreSQL + Painel Visual Web (Adminer)
+# diretamente de dentro da pasta `Database/`, mantendo tudo 100% isolado!
+#
+# COMO RODAR (dentro da pasta Database/):
+#   1. Subir o banco:                   docker compose up -d --build
+#   2. Parar o banco (mantendo dados):  docker compose down
+#   3. Resetar banco do zero (limpar):  docker compose down -v && docker compose up -d --build
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Servidor PostgreSQL 16 (Cria as tabelas de SemSupabase/ automaticamente)
+  # ----------------------------------------------------------------------------
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: template-postgres
+    restart: unless-stopped
+    env_file:
+      - path: ./.env
+        required: false
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-template_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-template_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ----------------------------------------------------------------------------
+  # 2. Painel Visual no Navegador (Adminer) — Tipo a tabela do Supabase!
+  # Acesse: http://localhost:8080 para ver as tabelas sem precisar saber SQL
+  # ----------------------------------------------------------------------------
+  adminer:
+    image: adminer:latest
+    container_name: template-db-painel
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: pepa-linha-dark
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+    name: template-postgres-data
+
+networks:
+  app-network:
+    driver: bridge
+    name: template-network

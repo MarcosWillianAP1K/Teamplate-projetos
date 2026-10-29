@@ -1,0 +1,11 @@
+{
+  "name": "template-board-tasks-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Template de Governança, Board de Tarefas (Cards de Sprints), Documentação MkDocs e AGENTS.md",
+  "scripts": {
+    "docs:extract": "node scripts/generate-docstrings-doc.js",
+    "docs:build": "node scripts/generate-docstrings-doc.js && mkdocs build",
+    "docs:serve": "node scripts/generate-docstrings-doc.js && mkdocs serve"
+  }
+}

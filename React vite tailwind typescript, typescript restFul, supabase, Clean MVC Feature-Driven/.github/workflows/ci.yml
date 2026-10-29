@@ -1,0 +1,123 @@
+# =============================================================================
+# GitHub Actions CI/CD — Template Fullstack (Supabase + Clean MVC)
+# Pipeline de Testes Automatizados, Validação de Tipos e Build
+# =============================================================================
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: Testes e Validação do Backend (Node.js + Supabase Client + Vitest)
+  # ---------------------------------------------------------------------------
+  backend-test:
+    name: "Backend: Testes & Build"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Backend
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependências
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --prefer-offline --no-audit --no-fund
+          else
+            npm install --prefer-offline --no-audit --no-fund
+          fi
+
+      - name: Typecheck (TypeScript estrito)
+        run: npm run typecheck
+
+      - name: Executar testes automatizados (Vitest)
+        run: npm test
+
+      - name: Compilar Backend
+        run: npm run build
+
+  # ---------------------------------------------------------------------------
+  # Job 2: Testes e Validação do Frontend (React 19 + Vite 7 + Tailwind v4)
+  # ---------------------------------------------------------------------------
+  frontend-test:
+    name: "Frontend: Testes & Build"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Frontend
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependências
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --prefer-offline --no-audit --no-fund
+          else
+            npm install --prefer-offline --no-audit --no-fund
+          fi
+
+      - name: Typecheck (TypeScript estrito)
+        run: npm run typecheck
+
+      - name: Executar testes automatizados (Vitest)
+        run: npm test
+
+      - name: Build de produção (Vite)
+        run: npm run build
+        env:
+          VITE_API_URL: /api
+          VITE_USE_MOCK_DATA: false
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://mock.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'mock-anon-key' }}
+
+  # ---------------------------------------------------------------------------
+  # Job 3: Validação do Docker Compose (Opcional)
+  # ---------------------------------------------------------------------------
+  docker-validation:
+    name: "Docker: Validação de Sintaxe"
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Preparar arquivos de ambiente (.env)
+        run: |
+          cp Backend/.env.example Backend/.env
+          cp Frontend/.env.example Frontend/.env
+
+      - name: Validar sintaxe do Docker Compose
+        run: docker compose config
+        env:
+          VITE_API_URL: /api
+          VITE_USE_MOCK_DATA: false
+          VITE_SUPABASE_URL: https://mock.supabase.co
+          VITE_SUPABASE_ANON_KEY: mock-anon-key
