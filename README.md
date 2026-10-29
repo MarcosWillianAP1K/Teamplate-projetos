@@ -40,7 +40,7 @@ $$\text{[Tecnologias do Frontend]}, \text{[Tecnologias do Backend]}, \text{[Banc
 
 ---
 
-### 2. [`React vite tailwind typescript, typescript restFul, supabase, Clean MVC Feature-Driven`](./React%20vite%20tailwind%20typescript,%20typescript%20restFul,%20supabase,%20Clean%20MVC%20Feature-Driven)
+### 2. [`React vite tailwind typescript, typescript restFul, supabase, Clean MVC Feature-Driven, docker`](./React%20vite%20tailwind%20typescript,%20typescript%20restFul,%20supabase,%20Clean%20MVC%20Feature-Driven,%20docker)
 * **Frontend:** React 19 + Vite 7 + Tailwind CSS v4 + Zustand 5 + TypeScript + Suporte opcional ao cliente Supabase.
 * **Backend:** Node.js + Express + Socket.IO + TypeScript + **Clean MVC + Fat Service** + Swagger UI + Cliente oficial `@supabase/supabase-js` + Middleware de autenticação Supabase Auth.
 * **Banco de Dados (pasta `Database/`):** Scripts SQL idempotentes prontos para colar e executar no *SQL Editor* do Supabase Cloud (`database.sql`, `migrations/` e `seeds/`), integrados com `auth.users`, UUID e Row Level Security (RLS).

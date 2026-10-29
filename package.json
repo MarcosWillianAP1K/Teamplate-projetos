@@ -6,7 +6,7 @@
   "scripts": {
     "typecheck:docker-pg": "npm --prefix \"React vite tailwind typescript, typescript restFul, postgreeSQL, Clean MVC Feature-Driven, docker\" run typecheck",
     "test:docker-pg": "npm --prefix \"React vite tailwind typescript, typescript restFul, postgreeSQL, Clean MVC Feature-Driven, docker\" run test",
-    "typecheck:supabase": "npm --prefix \"React vite tailwind typescript, typescript restFul, supabase, Clean MVC Feature-Driven\" run typecheck",
-    "test:supabase": "npm --prefix \"React vite tailwind typescript, typescript restFul, supabase, Clean MVC Feature-Driven\" run test"
+    "typecheck:supabase": "npm --prefix \"React vite tailwind typescript, typescript restFul, supabase, Clean MVC Feature-Driven, docker\" run typecheck",
+    "test:supabase": "npm --prefix \"React vite tailwind typescript, typescript restFul, supabase, Clean MVC Feature-Driven, docker\" run test"
   }
 }

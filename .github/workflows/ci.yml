@@ -1,17 +1,19 @@
 # =============================================================================
-# GitHub Actions CI/CD — InTEA (Interface do Terapeuta)
-# Pipeline de Testes Automatizados, Validação e Deploy (apenas para branch main)
+# GitHub Actions CI/CD — Catálogo de Templates de Projetos
+# Validação Automatizada de Tipagem, Testes e Builds de Todos os Templates
 # =============================================================================
 
-name: InTEA CI/CD Pipeline
+name: Catálogo de Templates CI
 
 on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,14 +21,13 @@ concurrency:
 
 jobs:
   # ---------------------------------------------------------------------------
-  # Job 1: Testes e Validação do Backend (Node.js + TypeScript + Vitest)
+  # Job 1: Validação do Template 1 (PostgreSQL Docker + Clean MVC)
   # ---------------------------------------------------------------------------
-  backend-test:
-    name: "Backend: Testes & Build"
+  template-postgresql:
+    name: "Template: PostgreSQL + Docker"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./Backend
+    env:
+      TEMPLATE_DIR: "React vite tailwind typescript, typescript restFul, postgreeSQL, Clean MVC Feature-Driven, docker"
 
     steps:
       - name: Checkout do repositório
@@ -36,30 +37,71 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
-          cache-dependency-path: Backend/package-lock.json
 
-      - name: Instalar dependências
-        run: npm ci --prefer-offline --no-audit --no-fund
+      - name: Backend — Instalar dependências
+        working-directory: ${{ env.TEMPLATE_DIR }}/Backend
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --prefer-offline --no-audit --no-fund
+          else
+            npm install --prefer-offline --no-audit --no-fund
+          fi
 
-      - name: Typecheck (TypeScript)
+      - name: Backend — Typecheck (TypeScript estrito)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Backend
         run: npm run typecheck
 
-      - name: Executar testes automatizados
+      - name: Backend — Executar testes (Vitest)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Backend
         run: npm test
 
-      - name: Compilar Backend
+      - name: Backend — Compilar (tsc)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Backend
         run: npm run build
 
+      - name: Frontend — Instalar dependências
+        working-directory: ${{ env.TEMPLATE_DIR }}/Frontend
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --prefer-offline --no-audit --no-fund
+          else
+            npm install --prefer-offline --no-audit --no-fund
+          fi
+
+      - name: Frontend — Typecheck (TypeScript estrito)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Frontend
+        run: npm run typecheck
+
+      - name: Frontend — Executar testes (Vitest)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Frontend
+        run: npm test
+
+      - name: Frontend — Build de produção (Vite)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Frontend
+        run: npm run build
+        env:
+          VITE_API_URL: /api
+          VITE_USE_MOCK_DATA: false
+
+      - name: Docker — Validar sintaxe do Docker Compose
+        working-directory: ${{ env.TEMPLATE_DIR }}
+        run: |
+          cp -n Database/.env.example Database/.env || true
+          cp -n Backend/.env.example Backend/.env || true
+          cp -n Frontend/.env.example Frontend/.env || true
+          docker compose config
+        env:
+          VITE_API_URL: /api
+          VITE_USE_MOCK_DATA: false
+
   # ---------------------------------------------------------------------------
-  # Job 2: Testes e Validação do Frontend (React + Vite + Tailwind v4 + Vitest)
+  # Job 2: Validação do Template 2 (Supabase Cloud + Clean MVC)
   # ---------------------------------------------------------------------------
-  frontend-test:
-    name: "Frontend: Testes & Build"
+  template-supabase:
+    name: "Template: Supabase + Clean MVC"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./Frontend
+    env:
+      TEMPLATE_DIR: "React vite tailwind typescript, typescript restFul, supabase, Clean MVC Feature-Driven, docker"
 
     steps:
       - name: Checkout do repositório
@@ -69,74 +111,84 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
-          cache-dependency-path: Frontend/package-lock.json
 
-      - name: Instalar dependências
-        run: npm ci --prefer-offline --no-audit --no-fund
+      - name: Backend — Instalar dependências
+        working-directory: ${{ env.TEMPLATE_DIR }}/Backend
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --prefer-offline --no-audit --no-fund
+          else
+            npm install --prefer-offline --no-audit --no-fund
+          fi
 
-      - name: Typecheck (TypeScript)
+      - name: Backend — Typecheck (TypeScript estrito)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Backend
         run: npm run typecheck
 
-      - name: Executar testes automatizados
+      - name: Backend — Executar testes (Vitest)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Backend
         run: npm test
 
-      - name: Build de produção (Vite)
+      - name: Backend — Compilar (tsc)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Backend
+        run: npm run build
+
+      - name: Frontend — Instalar dependências
+        working-directory: ${{ env.TEMPLATE_DIR }}/Frontend
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --prefer-offline --no-audit --no-fund
+          else
+            npm install --prefer-offline --no-audit --no-fund
+          fi
+
+      - name: Frontend — Typecheck (TypeScript estrito)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Frontend
+        run: npm run typecheck
+
+      - name: Frontend — Executar testes (Vitest)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Frontend
+        run: npm test
+
+      - name: Frontend — Build de produção (Vite)
+        working-directory: ${{ env.TEMPLATE_DIR }}/Frontend
         run: npm run build
         env:
           VITE_API_URL: /api
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://mock.supabase.co' }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'mock-anon-key' }}
+          VITE_USE_MOCK_DATA: false
+          VITE_SUPABASE_URL: https://mock.supabase.co
+          VITE_SUPABASE_ANON_KEY: mock-anon-key
+
+      - name: Docker — Validar sintaxe do Docker Compose
+        working-directory: ${{ env.TEMPLATE_DIR }}
+        run: |
+          cp -n Backend/.env.example Backend/.env || true
+          cp -n Frontend/.env.example Frontend/.env || true
+          docker compose config
+        env:
+          VITE_API_URL: /api
+          VITE_USE_MOCK_DATA: false
+          VITE_SUPABASE_URL: https://mock.supabase.co
+          VITE_SUPABASE_ANON_KEY: mock-anon-key
 
   # ---------------------------------------------------------------------------
-  # Job 3: Validação de Build dos Containers Docker
+  # Job 3: Validação do Template 3 (Board de Tasks & Documentação)
   # ---------------------------------------------------------------------------
-  docker-validation:
-    name: "Docker: Validação de Containers"
+  template-docs:
+    name: "Template: Board & Documentação"
     runs-on: ubuntu-latest
-    needs: [backend-test, frontend-test]
+    env:
+      TEMPLATE_DIR: "Template Board de Tasks, Gestao de Sprints, Documentacao Docs, AGENTS.md"
 
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v4
 
-      - name: Preparar arquivos de ambiente (.env)
-        run: |
-          cp Backend/.env.example Backend/.env
-          cp Frontend/.env.example Frontend/.env
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-      - name: Validar sintaxe do Docker Compose
-        run: docker compose config
-        env:
-          VITE_API_URL: /api
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://mock.supabase.co' }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'mock-anon-key' }}
-
-      - name: Build das imagens Docker
-        run: docker compose build
-        env:
-          VITE_API_URL: /api
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://mock.supabase.co' }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'mock-anon-key' }}
-
-  # ---------------------------------------------------------------------------
-  # Job 4: Deploy Automatizado (Apenas disparado no push para a branch main)
-  # ---------------------------------------------------------------------------
-  deploy:
-    name: "Deploy Automatizado (Main)"
-    runs-on: ubuntu-latest
-    needs: [backend-test, frontend-test, docker-validation]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - name: Checkout do repositório
-        uses: actions/checkout@v4
-
-      - name: Notificação de Deploy
-        run: |
-          echo "====================================================="
-          echo "Todos os testes e builds foram aprovados com sucesso!"
-          echo "Iniciando etapa de Deploy para a branch main..."
-          echo "Commit: ${{ github.sha }}"
-          echo "Autor: ${{ github.actor }}"
-          echo "====================================================="
+      - name: Executar script de extração de docstrings
+        working-directory: ${{ env.TEMPLATE_DIR }}
+        run: node scripts/generate-docstrings-doc.js
