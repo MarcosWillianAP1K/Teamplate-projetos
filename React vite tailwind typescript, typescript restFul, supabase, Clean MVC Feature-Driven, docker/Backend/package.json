@@ -1,32 +1,25 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Backend API RESTful + Gateway WebSocket (Node.js + Express + Socket.IO + TypeScript)",
+  "description": "Backend API RESTful (Node.js + Express + TypeScript + Supabase + Swagger)",
   "license": "ISC",
   "author": "",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/src/server.js",
   "scripts": {
-    "test": "vitest run",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/src/server.js",
-    "dev": "tsx watch src/server.ts",
-    "typecheck": "tsc --noEmit",
-    "seed": "tsx scripts/seed-exemplo.ts"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.116.0",
+    "@supabase/supabase-js": "^2.39.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "express-rate-limit": "^8.7.1",
-    "helmet": "^8.3.0",
-    "socket.io": "^4.7.2",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1"
-  },
-  "overrides": {
-    "qs": "^6.16.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -34,10 +27,8 @@
     "@types/node": "^26.5.1",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
-    "socket.io-client": "^4.8.4",
     "tsx": "^4.23.13",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.0",
-    "zod": "^4.6.5"
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.0"
   }
 }

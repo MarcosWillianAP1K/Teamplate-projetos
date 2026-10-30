@@ -1,7 +1,10 @@
 /**
  * ============================================================================
- * REST SERVICE FOR EXEMPLO DOMAIN
- * Segue o padrão HttpClient + withFallback + ENDPOINTS + Envelope Pattern
+ * SERVICE DA FEATURE EXEMPLO (Frontend)
+ * ============================================================================
+ * Realiza as chamadas HTTP para o Backend RESTful via cliente `http` (@/core/api).
+ * Utiliza `withFallback` para garantir que o frontend funcione mesmo se o
+ * Backend ou Banco de Dados ainda não estiverem rodando (usando `bdmock`).
  * ============================================================================
  */
 
@@ -21,130 +24,87 @@ import {
   desativarExemploMock,
 } from "../types/bdmock";
 
-/**
- * Serializes filter criteria into HTTP query parameters.
- *
- * @param filtros - Optional search, category, and pagination filters.
- * @returns Query parameter dictionary or undefined.
- */
-function serializarFiltros(
-  filtros?: FiltroExemploDTO,
-): Record<string, string> | undefined {
-  if (!filtros) return undefined;
-  const params: Record<string, string> = {};
-
-  if (filtros.busca && filtros.busca.trim()) {
-    params.busca = filtros.busca.trim();
-  }
-  if (
-    filtros.categoria &&
-    filtros.categoria !== "todas" &&
-    filtros.categoria !== "all"
-  ) {
-    params.categoria = filtros.categoria;
-  }
-  if (filtros.incluirInativos) {
-    params.incluirInativos = "true";
-  }
-  if (filtros.page !== undefined) params.page = String(filtros.page);
-  if (filtros.limit !== undefined) params.limit = String(filtros.limit);
-
-  return Object.keys(params).length > 0 ? params : undefined;
-}
-
 export const exemploService = {
   /**
-   * Lists example items from the Backend API or mock fallback.
-   *
-   * @param filtros - Optional search and category filters.
-   * @returns Array of example items.
+   * Lista itens de exemplo da API REST ou do bdmock em caso de fallback
    */
-  listar: async (filtros?: FiltroExemploDTO): Promise<ItemExemplo[]> => {
-    return await withFallback(
+  async listar(filtros?: FiltroExemploDTO): Promise<ItemExemplo[]> {
+    return withFallback(
       async () => {
-        const params = serializarFiltros(filtros);
-        const resposta = await http.get<ExemplosListaRespostaApi>(
-          ENDPOINTS.EXEMPLO.BASE,
-          { params },
-        );
-        return resposta.data?.exemplos ?? [];
+        const params: Record<string, string | number | boolean | undefined> = {};
+        if (filtros?.busca) params.busca = filtros.busca;
+        if (filtros?.categoria && filtros.categoria !== "todas") {
+          params.categoria = filtros.categoria;
+        }
+        if (filtros?.incluirInativos) params.incluirInativos = true;
+        if (filtros?.page) params.page = filtros.page;
+        if (filtros?.limit) params.limit = filtros.limit;
+
+        const res = await http.get<ExemplosListaRespostaApi>(ENDPOINTS.EXEMPLO, {
+          params,
+        });
+        return res.data.exemplos;
       },
-      () => listarExemplosMock(filtros),
+      () => listarExemplosMock(filtros)
     );
   },
 
   /**
-   * Retrieves a single example item by ID.
-   *
-   * @param id - Item UUID.
-   * @returns Matching example item or null if not found.
+   * Busca um item de exemplo específico pelo ID
    */
-  buscarPorId: async (id: string): Promise<ItemExemplo | null> => {
-    if (!id || !id.trim()) return null;
-
-    return await withFallback(
+  async buscarPorId(id: string): Promise<ItemExemplo | null> {
+    return withFallback(
       async () => {
-        const resposta = await http.get<ExemploRespostaApi>(
-          ENDPOINTS.EXEMPLO.BY_ID(id),
-        );
-        return resposta.data?.exemplo ?? null;
+        const res = await http.get<ExemploRespostaApi>(`${ENDPOINTS.EXEMPLO}/${id}`);
+        return res.data.exemplo;
       },
-      () => buscarExemploMockPorId(id),
+      () => buscarExemploMockPorId(id)
     );
   },
 
   /**
-   * Creates a new example item via POST /api/exemplo.
-   *
-   * @param dto - Creation payload (`nome`, `descricao`, `categoria`).
-   * @returns Newly created example item.
+   * Cria um novo item de exemplo via POST /api/exemplo ou adiciona ao bdmock
    */
-  criar: async (dto: CriarExemploDTO): Promise<ItemExemplo> => {
-    return await withFallback(
+  async criar(dto: CriarExemploDTO): Promise<ItemExemplo> {
+    return withFallback(
       async () => {
-        const resposta = await http.post<ExemploRespostaApi, CriarExemploDTO>(
-          ENDPOINTS.EXEMPLO.BASE,
-          dto,
-        );
-        return resposta.data.exemplo;
+        const res = await http.post<ExemploRespostaApi>(ENDPOINTS.EXEMPLO, dto);
+        return res.data.exemplo;
       },
-      () => criarExemploMock(dto),
+      () => criarExemploMock(dto)
     );
   },
 
   /**
-   * Updates an existing example item via PUT /api/exemplo/:id.
-   *
-   * @param id - Item UUID.
-   * @param dto - Partial update payload.
-   * @returns Updated example item.
+   * Atualiza dados de um item de exemplo existente
    */
-  atualizar: async (
+  async atualizar(
     id: string,
-    dto: AtualizarExemploDTO,
-  ): Promise<ItemExemplo> => {
-    const resposta = await http.put<ExemploRespostaApi, AtualizarExemploDTO>(
-      ENDPOINTS.EXEMPLO.BY_ID(id),
-      dto,
-    );
-    return resposta.data.exemplo;
+    dto: AtualizarExemploDTO
+  ): Promise<ItemExemplo | null> {
+    try {
+      const res = await http.put<ExemploRespostaApi>(
+        `${ENDPOINTS.EXEMPLO}/${id}`,
+        dto
+      );
+      return res.data.exemplo;
+    } catch {
+      return null;
+    }
   },
 
   /**
-   * Deactivates an example item via DELETE /api/exemplo/:id (Soft Delete).
-   *
-   * @param id - Item UUID.
-   * @returns Deactivated example item or null.
+   * Desativa logicamente um item de exemplo (Soft Delete)
    */
-  desativar: async (id: string): Promise<ItemExemplo | null> => {
-    return await withFallback(
+  async desativar(id: string): Promise<ItemExemplo | null> {
+    return withFallback(
       async () => {
-        const resposta = await http.delete<ExemploRespostaApi>(
-          ENDPOINTS.EXEMPLO.BY_ID(id),
+        const res = await http.delete<ExemploRespostaApi>(
+          `${ENDPOINTS.EXEMPLO}/${id}`
         );
-        return resposta.data?.exemplo ?? null;
+        return res?.data?.exemplo ?? null;
       },
-      () => desativarExemploMock(id),
+      () => desativarExemploMock(id)
     );
   },
 };

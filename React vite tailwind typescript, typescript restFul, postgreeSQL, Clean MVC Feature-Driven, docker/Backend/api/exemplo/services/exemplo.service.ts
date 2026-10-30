@@ -4,20 +4,18 @@ import type {
   AtualizarExemploDTO,
   FiltroExemploDTO,
 } from '../dtos/exemplo.dto.js';
-import { eventBus } from '../../../core/events/event-bus.js';
 
 /**
  * ==============================================================================
- * Service: Regras de Negócio e Orquestração de Domínio da Feature Exemplo
- * Camada Fat Service: executa validações de negócio, paginação e eventos.
+ * Service: Regras de Negócio da Feature Exemplo
+ * ==============================================================================
+ * Camada intermediária que conecta o Controller ao Model.
+ * Executa regras de negócio, validações complementares e paginação.
  * ==============================================================================
  */
 export class ExemploService {
   /**
-   * Lists example items with metadata for envelope responses.
-   *
-   * @param filtros - Optional filter and pagination criteria.
-   * @returns Object containing categorized items array and pagination metadata.
+   * Lista itens de exemplo aplicando paginação e filtros opcionais.
    */
   static async listar(filtros?: FiltroExemploDTO): Promise<{
     exemplos: ItemExemplo[];
@@ -46,78 +44,45 @@ export class ExemploService {
   }
 
   /**
-   * Retrieves a single example item by ID.
-   *
-   * @param id - Unique identifier of the example item.
-   * @returns Matching item or undefined if not found.
+   * Busca um item de exemplo pelo ID único.
    */
   static async buscarPorId(id: string): Promise<ItemExemplo | undefined> {
     return ExemploModel.buscarPorId(id);
   }
 
   /**
-   * Creates a new example item and emits the `exemplo:criado` domain event.
-   *
-   * @param dto - Validated creation DTO.
-   * @param usuarioId - Optional authenticated user ID.
-   * @returns Newly created example item.
+   * Cria um novo item de exemplo.
    */
-  static async criar(dto: CriarExemploDTO, usuarioId?: string): Promise<ItemExemplo> {
-    const novo = await ExemploModel.criar(dto);
-    eventBus.emitir('exemplo:criado', { exemplo: novo, usuarioId });
-    return novo;
+  static async criar(dto: CriarExemploDTO): Promise<ItemExemplo> {
+    return ExemploModel.criar(dto);
   }
 
   /**
-   * Updates an existing example item and emits `exemplo:atualizado`.
-   *
-   * @param id - Unique identifier of the item.
-   * @param dto - Partial update DTO.
-   * @param usuarioId - Optional authenticated user ID.
-   * @returns Updated item or undefined if not found.
+   * Atualiza dados de um item existente.
    */
   static async atualizar(
     id: string,
-    dto: AtualizarExemploDTO,
-    usuarioId?: string
+    dto: AtualizarExemploDTO
   ): Promise<ItemExemplo | undefined> {
-    const atualizado = await ExemploModel.atualizar(id, dto);
-    if (atualizado) {
-      eventBus.emitir('exemplo:atualizado', { exemplo: atualizado, usuarioId });
-    }
-    return atualizado;
+    return ExemploModel.atualizar(id, dto);
   }
 
   /**
-   * Deactivates an example item via Soft Delete (`status_ativo = false`).
-   *
-   * @param id - Unique identifier of the item.
-   * @param usuarioId - Optional authenticated user ID.
-   * @returns Deactivated item or undefined if not found.
+   * Desativa logicamente um item (Soft Delete).
    */
-  static async desativar(id: string, usuarioId?: string): Promise<ItemExemplo | undefined> {
-    const desativado = await ExemploModel.desativar(id);
-    if (desativado) {
-      eventBus.emitir('exemplo:desativado', { exemploId: id, usuarioId });
-    }
-    return desativado;
+  static async desativar(id: string): Promise<ItemExemplo | undefined> {
+    return ExemploModel.desativar(id);
   }
 
   /**
-   * Reactivates a logically deactivated item (`status_ativo = true`).
-   *
-   * @param id - Unique identifier of the item.
-   * @returns Reactivated item or undefined if not found.
+   * Reativa um item desativado logicamente.
    */
   static async reativar(id: string): Promise<ItemExemplo | undefined> {
     return ExemploModel.reativar(id);
   }
 
   /**
-   * Permanently deletes an example item (Hard Delete).
-   *
-   * @param id - Unique identifier of the item.
-   * @returns True if deleted, false if not found.
+   * Remove permanentemente do armazenamento (Hard Delete).
    */
   static async deletarHard(id: string): Promise<boolean> {
     return ExemploModel.deletarHard(id);

@@ -6,6 +6,8 @@ import {
   Sun,
 } from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
+import { APP_ROUTES } from "@/routes/utils/Path";
 import {
   Avatar,
   AvatarFallback,
@@ -20,8 +22,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { USUARIO_PADRAO_MOCK } from "@/shared/types/bdmock";
 import { useTheme } from "@/shared/providers/theme-provider";
+
+const USUARIO_PADRAO = {
+  nome: "Usuário Exemplo",
+  email: "usuario@exemplo.com",
+  cargo: "Desenvolvedor",
+  registro: "DEV-001",
+};
 
 export interface NavUserProps {
   user?: {
@@ -44,14 +52,15 @@ function extrairIniciais(nomeCompleto: string): string {
 }
 
 export function NavUser({ user }: NavUserProps = {}) {
+  const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
 
-  const displayName = user?.name || USUARIO_PADRAO_MOCK.nome;
-  const displayEmail = user?.email || USUARIO_PADRAO_MOCK.email;
+  const displayName = user?.name || USUARIO_PADRAO.nome;
+  const displayEmail = user?.email || USUARIO_PADRAO.email;
   const displayAvatar = user?.avatar;
-  const displayRole = user?.roleLabel || USUARIO_PADRAO_MOCK.cargo;
+  const displayRole = user?.roleLabel || USUARIO_PADRAO.cargo;
   const displayRegistro =
-    user?.registroProfissional || USUARIO_PADRAO_MOCK.registro || "DEV-001";
+    user?.registroProfissional || USUARIO_PADRAO.registro;
 
   const iniciais = extrairIniciais(displayName);
 
@@ -133,7 +142,10 @@ export function NavUser({ user }: NavUserProps = {}) {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="cursor-pointer rounded-lg text-destructive focus:text-destructive focus:bg-destructive/10">
+        <DropdownMenuItem
+          onClick={() => navigate(APP_ROUTES.LOGOUT)}
+          className="cursor-pointer rounded-lg text-destructive focus:text-destructive focus:bg-destructive/10"
+        >
           <LogOut className="mr-2 h-4 w-4 text-destructive" />
           <span>Encerrar Sessão</span>
         </DropdownMenuItem>

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Layers, Sparkles } from "lucide-react";
+import { APP_ROUTES } from "@/routes/utils/Path";
 
 import { NavProjects } from "./nav-projects";
 import { NavHeader } from "./nav-header";
@@ -27,12 +28,12 @@ export function AppSidebar({
   const navItems = [
     {
       name: "Feature Exemplo",
-      url: "/exemplo",
+      url: APP_ROUTES.EXEMPLO,
       icon: Layers,
     },
     {
       name: "Modo Foco (Layout)",
-      url: "/exemplo/foco",
+      url: APP_ROUTES.EXEMPLO_FOCO,
       icon: Sparkles,
     },
   ];

@@ -14,13 +14,15 @@ docs/
 ├── DocsSprints/              # Gestão do Kanban e Cards de Tarefas (Sprints)
 │   ├── visao_geral.md        # Hub mestre de navegação e resumo das sprints
 │   ├── tasks/                # Arquivos isolados com os cards de tarefas de cada sprint
-│   └── sprints/              # Relatórios acadêmicos e retrospectivas de sprint
+│   └── sprints/              # Relatórios e retrospectivas de sprint
 │
-├── DocsProjeto/              # Documentação modular estruturada (Visão Geral, Requisitos, Diagramas)
-│   ├── 01-visao-geral/       # Contexto, objetivos e arquitetura macro
+├── DocsProjeto/              # Documentação modular estruturada por disciplina
+│   ├── 01-visao-geral/       # Contexto, objetivos e escopo do produto
 │   ├── 02-engenharia-requisitos/ # Requisitos funcionais, não-funcionais e regras de negócio
-│   ├── 03-diagramas-arquiteturais/ # Diagramas Mermaid (classes, sequência, banco)
-│   └── 06-qualidade-e-testes/ # Estratégia de testes e conformidade
+│   ├── 03-diagramas-arquiteturais/ # Diagramas Mermaid (C4, sequência, DER)
+│   ├── 04-arquitetura-e-contratos/ # Padrões de projeto, contratos de API e segurança
+│   ├── 05-sprints-e-evolucao/ # Roadmap, histórico de releases e decisões de sprint
+│   └── 06-qualidade-e-testes/ # Estratégia de testes, Quality Gates e homologação
 │
 └── ModelosDeContratos/       # Esquemas JSON canônicos para contratos de integração
 ```

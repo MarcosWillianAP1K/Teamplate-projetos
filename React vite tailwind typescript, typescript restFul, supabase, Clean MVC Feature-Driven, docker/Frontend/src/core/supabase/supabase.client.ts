@@ -2,11 +2,8 @@
  * ============================================================================
  * MODO: USO SUPABASE (Configuração Opcional do Supabase no Frontend)
  * ============================================================================
- * Utilize este arquivo APENAS se o seu projeto optar por usar o Supabase
- * diretamente no Frontend (ex: Supabase Realtime ou OAuth direto).
- *
- * No modo `SemSupabase` (PostgreSQL no Docker/VPS), ignore este arquivo e use
- * a comunicação padrão REST (`core/api/http-client.ts`) + JWT (`core/SemSupabase/jwt-storage.ts`).
+ * Utilize este arquivo se o seu projeto optar por consumir o Supabase
+ * diretamente no Frontend (ex: Supabase Realtime, Storage ou OAuth direto).
  * ============================================================================
  */
 

@@ -2,11 +2,22 @@
  * ============================================================================
  * LEMBRETE DE ARQUITETURA — SERVICE DE AUTENTICAÇÃO (`features/autenticacao/services`)
  * ============================================================================
- * Esqueleto limpo para lembrar onde implementar as chamadas de autenticação
- * (ex: login, cadastro, logout) comunicando com o Backend (`/api/auth/...`).
+ * Esqueleto para implementar chamadas de login, cadastro e logout.
+ * Integra-se ao storage de JWT (`core/auth/jwt-storage.ts`).
  * ============================================================================
  */
 
+import { jwtStorage } from "@/core/auth/jwt-storage";
+
 export const authService = {
-  // TODO: Adicionar métodos (ex: login, cadastrar, logout) quando necessário no projeto
+  getStoredToken: (): string | null => {
+    return jwtStorage.obterToken();
+  },
+
+  logoutService: (): void => {
+    jwtStorage.limparToken();
+  },
 };
+
+export const getStoredToken = authService.getStoredToken;
+export const logoutService = authService.logoutService;

@@ -3,8 +3,10 @@ import { ExemploController } from '../controllers/exemplo.controller.js';
 
 /**
  * ==============================================================================
- * Routes: Endpoints REST da Feature Exemplo (/api/exemplo)
- * Convenção: Recurso no singular e sub-ações semânticas no final da URI.
+ * Rotas: Endpoints REST da Feature Exemplo (/api/exemplo)
+ * ==============================================================================
+ * Define os mapeamentos de URL HTTP para os métodos correspondentes do Controller.
+ * As anotações JSDoc (@swagger) alimentam automaticamente a UI do Swagger em /api/docs.
  * ==============================================================================
  */
 export const exemploRoutes = Router();
@@ -13,7 +15,7 @@ export const exemploRoutes = Router();
  * @swagger
  * /api/exemplo:
  *   get:
- *     summary: Lista os itens de exemplo com suporte a busca e filtro de categoria
+ *     summary: Lista itens de exemplo
  *     tags: [Exemplo]
  *     parameters:
  *       - in: query
@@ -25,10 +27,10 @@ export const exemploRoutes = Router();
  *         name: categoria
  *         schema:
  *           type: string
- *         description: Filtro por categoria (geral, arquitetura, frontend, backend, banco)
+ *         description: Filtro de categoria
  *     responses:
  *       200:
- *         description: Lista de itens de exemplo retornada no formato Envelope Pattern
+ *         description: Lista de itens retornada no Envelope Pattern
  */
 exemploRoutes.get('/', ExemploController.listar);
 
@@ -36,7 +38,7 @@ exemploRoutes.get('/', ExemploController.listar);
  * @swagger
  * /api/exemplo/{id}:
  *   get:
- *     summary: Busca um item de exemplo pelo ID
+ *     summary: Busca item de exemplo por ID
  *     tags: [Exemplo]
  *     parameters:
  *       - in: path
@@ -46,7 +48,7 @@ exemploRoutes.get('/', ExemploController.listar);
  *           type: string
  *     responses:
  *       200:
- *         description: Item de exemplo encontrado
+ *         description: Item encontrado
  *       404:
  *         description: Item não encontrado
  */
@@ -75,8 +77,6 @@ exemploRoutes.get('/:id', ExemploController.buscarPorId);
  *     responses:
  *       201:
  *         description: Item criado com sucesso
- *       400:
- *         description: Dados de entrada inválidos
  */
 exemploRoutes.post('/', ExemploController.criar);
 
@@ -92,11 +92,22 @@ exemploRoutes.post('/', ExemploController.criar);
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nome:
+ *                 type: string
+ *               descricao:
+ *                 type: string
+ *               categoria:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Item atualizado com sucesso
- *       404:
- *         description: Item não encontrado
  */
 exemploRoutes.put('/:id', ExemploController.atualizar);
 
@@ -117,39 +128,3 @@ exemploRoutes.put('/:id', ExemploController.atualizar);
  *         description: Item desativado com sucesso
  */
 exemploRoutes.delete('/:id', ExemploController.desativar);
-
-/**
- * @swagger
- * /api/exemplo/{id}/reativar:
- *   patch:
- *     summary: Reativa um item de exemplo desativado
- *     tags: [Exemplo]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Item reativado com sucesso
- */
-exemploRoutes.patch('/:id/reativar', ExemploController.reativar);
-
-/**
- * @swagger
- * /api/exemplo/{id}/hard:
- *   delete:
- *     summary: Remove permanentemente um item de exemplo (Hard Delete)
- *     tags: [Exemplo]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Item excluído permanentemente
- */
-exemploRoutes.delete('/:id/hard', ExemploController.deletarHard);

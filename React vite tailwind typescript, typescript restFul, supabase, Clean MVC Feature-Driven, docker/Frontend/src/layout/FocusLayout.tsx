@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Button } from "@/shared/components/ui/button";
-import { ArrowLeft, Shield } from "lucide-react";
+import { ArrowLeft, Layers } from "lucide-react";
+import { APP_ROUTES } from "@/routes/utils/Path";
 
 export interface FocusLayoutProps {
   children?: ReactNode;
@@ -24,7 +25,7 @@ export function FocusLayout({
     if (onVoltar) {
       onVoltar();
     } else {
-      navigate("/jogos");
+      navigate(APP_ROUTES.EXEMPLO);
     }
   };
 
@@ -38,34 +39,35 @@ export function FocusLayout({
           <div className="flex items-center gap-3">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleVoltar}
-              className="rounded-xl text-xs gap-1.5 hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer"
+              className="gap-2 cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Voltar</span>
             </Button>
-            {titulo && (
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-foreground">{titulo}</span>
-                {subtitulo && (
-                  <span className="text-xs text-muted-foreground">{subtitulo}</span>
-                )}
-              </div>
-            )}
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm leading-tight text-foreground-heading">
+                {titulo || "Modo Foco"}
+              </span>
+              {subtitulo && (
+                <span className="text-xs text-muted-foreground">{subtitulo}</span>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xs font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800 flex items-center gap-1">
-              <Shield className="h-3 w-3" />
-              Modo Foco Clínico
-            </span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+              <Layers className="h-3 w-3" />
+              <span>Foco Total</span>
+            </div>
           </div>
         </header>
       )}
-      <div className="flex flex-1 flex-col w-full">
-        {children ?? <Outlet />}
-      </div>
+
+      <main className="flex-1 flex flex-col p-4 sm:p-6 w-full max-w-7xl mx-auto">
+        {children || <Outlet />}
+      </main>
     </div>
   );
 }

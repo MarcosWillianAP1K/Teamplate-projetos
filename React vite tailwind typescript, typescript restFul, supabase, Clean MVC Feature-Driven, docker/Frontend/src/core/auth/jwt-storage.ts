@@ -1,10 +1,10 @@
 /**
  * ============================================================================
- * MODO: SEM SUPABASE (Gerenciamento de JWT Próprio no Frontend)
+ * GERENCIAMENTO DE JWT LOCAL NO FRONTEND
  * ============================================================================
- * Quando o projeto roda com PostgreSQL no Docker/VPS sem Supabase, o Backend
- * emite um token JWT próprio que é armazenado localmente e enviado no header
- * `Authorization: Bearer <token>` pelo `http-client.ts`.
+ * Armazena e recupera o token de acesso (access_token) no localStorage.
+ * Utilizado para autenticar requisições enviando o header:
+ * `Authorization: Bearer <token>`.
  * ============================================================================
  */
 
