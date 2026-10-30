@@ -1,5 +1,5 @@
 -- =============================================================================
--- [SEM SUPABASE] Migration 001: Schema Inicial para PostgreSQL no Docker / VPS
+-- Migration 001: Schema Inicial para PostgreSQL
 -- =============================================================================
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -13,16 +13,6 @@ BEGIN
   RETURN NEW;
 END;
 $$;
-
-CREATE TABLE IF NOT EXISTS public.usuario (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome VARCHAR(160) NOT NULL,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  senha_hash TEXT NOT NULL,
-  status_ativo BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT TIMEZONE('utc', NOW()),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT TIMEZONE('utc', NOW())
-);
 
 CREATE TABLE IF NOT EXISTS public.exemplo (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

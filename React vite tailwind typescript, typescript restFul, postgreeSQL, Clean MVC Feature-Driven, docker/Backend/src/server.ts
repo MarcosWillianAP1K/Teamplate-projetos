@@ -17,19 +17,9 @@ const swaggerSpec = swaggerJsdoc({
     info: {
       title: 'Template API RESTful',
       version: '1.0.0',
-      description: 'Documentação interativa da API (Clean MVC + Envelope Pattern)',
+      description: 'Documentação interativa da API (Clean MVC Feature-Driven)',
     },
     servers: [{ url: `http://localhost:${port}` }],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          description: 'Insira o token JWT Bearer',
-        },
-      },
-    },
   },
   apis: import.meta.url.includes('/dist/')
     ? ['./dist/api/**/*.routes.js']
@@ -70,7 +60,7 @@ app.use(
   })
 );
 
-// Registro central dos endpoints (/api/exemplo, /api/auth, etc.)
+// Registro central dos endpoints das features (/api/exemplo)
 app.use('/api', apiRouter);
 
 // Middleware global de tratamento de erros

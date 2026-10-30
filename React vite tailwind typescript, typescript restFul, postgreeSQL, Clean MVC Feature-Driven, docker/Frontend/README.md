@@ -1,29 +1,27 @@
-# Frontend — SPA (React 19 + Vite + Tailwind CSS v4 + Zustand)
+# Frontend — SPA (React 19 + Vite + Tailwind CSS v4)
 
-Camada de interface construída segundo o padrão **Feature-Driven Clean Architecture**.
+Camada de interface construída segundo o padrão **Feature-Driven Clean Architecture**, mantida enxuta e focada na estrutura do projeto.
 
 ## Estrutura de Pastas
 
 ```text
 Frontend/src/
 ├── main.tsx                        # Ponto de entrada React 19
-├── App.tsx                         # ThemeProvider + BrowserRouter + Routes
-├── routes/                         # Roteamento central (SidebarLayout & FocusLayout)
-├── layout/                         # Cascas de layout e barra lateral
-├── core/                           # Cliente HTTP resiliente (request.ts), ENDPOINTS e WebSocket
+├── App.tsx                         # RouterProvider central
+├── routes/                         # Roteamento central com MainLayout
+├── layout/                         # MainLayout (casca estrutural simples)
+├── core/                           # Cliente HTTP base e dicionário de endpoints
 ├── features/
-│   └── exemplo/                    # Feature de Referência Vertical
-│       ├── pages/                  # Páginas Mestre (ExemploPage.tsx)
-│       ├── components/             # Componentes Atômicos e Modais (CardExemplo, DialogCriarExemplo)
-│       ├── hooks/                  # Custom Hooks (useExemplo.ts)
-│       ├── store/                  # Estado global Zustand (exemplo.store.ts)
-│       ├── services/               # Chamadas HTTP com withFallback (exemplo.service.ts)
-│       ├── types/                  # Interfaces TypeScript e bdmock.ts
-│       └── __test__/               # Testes automatizados Vitest
-└── shared/
-    ├── components/ui/              # 17 primitivos Radix UI / shadcn
-    ├── hooks/                      # Hooks utilitários (use-mobile.ts)
-    ├── lib/                        # Utilitários (cn)
-    ├── providers/                  # ThemeProvider (light/dark/system)
-    └── utils/                      # Motor HTTP (request.ts)
+│   └── exemplo/                    # Exemplo de estrutura de funcionalidade
+│       ├── pages/                  # Página da feature (ExemploPage.tsx)
+│       ├── components/             # Componente visual da feature (CardExemplo.tsx)
+│       ├── services/               # Chamadas HTTP (exemplo.service.ts)
+│       └── types/                  # Tipagens TypeScript da feature
+├── shared/
+│   ├── components/ui/              # Componentes visuais compartilhados (ex: Button.tsx)
+│   ├── lib/                        # Utilitários (cn com clsx + tailwind-merge)
+│   ├── types/                      # Tipagens globais da API
+│   └── utils/                      # Motor HTTP fetch (request.ts)
+└── styles/
+    └── index.css                   # Tailwind v4 com variáveis primary e secondary
 ```
